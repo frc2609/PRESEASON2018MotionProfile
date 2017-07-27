@@ -1,6 +1,7 @@
 package org.usfirst.frc.team2609.robot;
 
 import com.ctre.CANTalon;
+import com.ctre.CANTalon.TalonControlMode;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -28,9 +29,9 @@ public class RobotMap {
 	public static boolean drivetrainMPActiveEh,generatedEh = false;
 	public static CANTalon left1,left2,right1,right2;
 	public static AHRS ahrs;
-	public static int leftEncPerUnit = 511;
-	public static int rightEncPerUnit = 511;
-	public static double cruiseVelocity = 16;
+	public static int leftEncPerUnit = 611;
+	public static int rightEncPerUnit = 611;
+	public static double cruiseVelocity = 6; //6.6
 	public static TankModifier plannedPath;
 	public static void init(){
 		left1 = new CANTalon(1);
@@ -45,16 +46,23 @@ public class RobotMap {
         }
 
 		RobotMap.right1.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
-		RobotMap.right1.configEncoderCodesPerRev(RobotMap.rightEncPerUnit);//this is haram
-		RobotMap.right1.setInverted(true);
+		RobotMap.right1.configEncoderCodesPerRev(RobotMap.rightEncPerUnit);
+		RobotMap.right1.setStatusFrameRateMs(CANTalon.StatusFrameRate.QuadEncoder, 10);
+		RobotMap.right1.setInverted(false);
 		RobotMap.right1.reverseSensor(false);
 		RobotMap.right1.reverseOutput(false);
 		RobotMap.left1.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
+		RobotMap.left1.setStatusFrameRateMs(CANTalon.StatusFrameRate.QuadEncoder, 10);
 		RobotMap.left1.configEncoderCodesPerRev(RobotMap.leftEncPerUnit);
-		RobotMap.left1.setInverted(false);
+		RobotMap.left1.setInverted(true);
 		RobotMap.left1.reverseSensor(true);
 		RobotMap.left1.reverseOutput(false);
 		RobotMap.left1.setVoltageRampRate(10000);
     	RobotMap.right1.setVoltageRampRate(10000);
+		right2.changeControlMode(TalonControlMode.Follower);
+		right2.set(3);
+		left2.changeControlMode(TalonControlMode.Follower);
+		left2.set(1);
+		
 	}
 }

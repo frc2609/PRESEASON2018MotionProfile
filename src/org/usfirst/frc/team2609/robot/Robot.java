@@ -23,9 +23,9 @@ import org.usfirst.frc.team2609.robot.subsystems.PathGenerator;
  */
 public class Robot extends IterativeRobot {
 
-	public static final Drivetrain driveTrain = new Drivetrain();
-	public static final Logger logger = Logger.getInstance();
-	public static final PathGenerator pathGenerator = new PathGenerator();
+	public static Drivetrain driveTrain;
+	public static Logger logger;
+	public static PathGenerator pathGenerator;
 	public static OI oi;
 
 	Looper enabledLooper;
@@ -40,10 +40,22 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 		RobotMap.init();
+		driveTrain = new Drivetrain();
+		pathGenerator  = new PathGenerator();
+		logger = Logger.getInstance();
+        enabledLooper = new Looper();
 		oi = new OI();
+		driveTrain.changeBreakMode(true);
 //		chooser.addDefault("Default Auto", new ExampleCommand());
 		// chooser.addObject("My Auto", new MyAutoCommand());
 		SmartDashboard.putData("Auto mode", chooser);
+		logger.openFile();
+    	try{
+    		enabledLooper.register(driveTrain.getLooper());
+    	} catch (Throwable t){
+        	System.out.println(t.getMessage());
+        	System.out.println(t.getStackTrace());
+    	}
 	}
 
 	/**
@@ -53,7 +65,11 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void disabledInit() {
+		logger.close();
+		enabledLooper.stop();
+		driveTrain.changeBreakMode(false);
 
+		
 	}
 
 	@Override
@@ -86,6 +102,8 @@ public class Robot extends IterativeRobot {
 		// schedule the autonomous command (example)
 		if (autonomousCommand != null)
 			autonomousCommand.start();
+
+		driveTrain.changeBreakMode(true);
 	}
 
 	/**
@@ -104,6 +122,10 @@ public class Robot extends IterativeRobot {
 		// this line or comment it out.
 		if (autonomousCommand != null)
 			autonomousCommand.cancel();
+		logger.openFile();
+		this.driveTrain.resetDriveEncoders();
+        enabledLooper.start();
+		driveTrain.changeBreakMode(true);
 	}
 
 	/**
@@ -112,6 +134,9 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
+//		RobotMap.left1.set(OI.joy.getRawAxis(1));
+//		RobotMap.right1.set(OI.joy.getRawAxis(1));
+		System.out.println(RobotMap.right1.getPosition());
 	}
 
 	/**

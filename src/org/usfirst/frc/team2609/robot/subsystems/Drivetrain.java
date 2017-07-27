@@ -24,7 +24,7 @@ public class Drivetrain extends Subsystem {
 	private static double turningGain = 0;  // 0 is no change, larger has greater effect
 	private static double deadZone = 0.15; //Deadband for the controller
 	double[] defaultval = new double[0];
-	EncoderFollower left,right;
+	public static EncoderFollower left,right;
 	private final Loop mLoop = new Loop() {
 		@Override
 		public void onStart(){
@@ -33,10 +33,11 @@ public class Drivetrain extends Subsystem {
 		@Override
 		public void onLoop(){
 			synchronized (Drivetrain.this){
+//				Robot.logger.logAll();
 				if(RobotMap.drivetrainMPActiveEh){
 					// Run motion profiler
-			    	double leftOutput = left.calculate(RobotMap.left1.getPosition());
-			    	double rightOutput = right.calculate(RobotMap.right1.getPosition());
+			    	double leftOutput = left.calculate(RobotMap.left1.getEncPosition());
+			    	double rightOutput = right.calculate(RobotMap.right1.getEncPosition());
 //			    	if(rightOutput != 0){
 //			    		rightOutput = rightSegment.velocity * (1/(RobotMap.cruiseVelocity));
 //			    	}
@@ -98,11 +99,11 @@ public class Drivetrain extends Subsystem {
 			this.resetDriveEncoders();
 			left = new EncoderFollower(RobotMap.plannedPath.getLeftTrajectory());
 			left.configureEncoder(RobotMap.left1.getEncPosition(), 3840, 6 / 12);
-			left.configurePIDVA( 0.0, 0.0, 0.0, 1 / (RobotMap.cruiseVelocity), 1/12);
+			left.configurePIDVA( 0.0, 0.0, 0.0, 1 / (RobotMap.cruiseVelocity), .05);
 
 			right = new EncoderFollower(RobotMap.plannedPath.getRightTrajectory());
 			right.configureEncoder(RobotMap.right1.getEncPosition(), 3840, 6 / 12);
-			right.configurePIDVA(0.0, 0, 0.0, 1 / (RobotMap.cruiseVelocity), 1/12);
+			right.configurePIDVA(0.0, 0, 0.0, 1 / (RobotMap.cruiseVelocity), .05);
 
 			RobotMap.left1.changeControlMode(TalonControlMode.PercentVbus);
 			RobotMap.right1.changeControlMode(TalonControlMode.PercentVbus);
@@ -119,6 +120,12 @@ public class Drivetrain extends Subsystem {
     }
     public double nativeVelToFPSR(double nativeVel){
     	return ((nativeVel*10)/4)/RobotMap.rightEncPerUnit;
+    }
+    public void changeBreakMode(boolean flip){
+		RobotMap.left1.enableBrakeMode(flip);
+		RobotMap.left2.enableBrakeMode(flip);
+		RobotMap.right1.enableBrakeMode(flip);
+		RobotMap.right2.enableBrakeMode(flip);
     }
 }
 

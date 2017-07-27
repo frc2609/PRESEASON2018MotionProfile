@@ -79,11 +79,11 @@ public class Logger {
     private String getPath() {
     	this.fileName = SmartDashboard.getString(SDFileName, "beaverlog");
         if(this.ds.isFMSAttached()) {
-            return String.format("/home/lvuser/beaverlogs/%d_%s_%d_log.txt", ++this.max, this.ds.getAlliance().name(), this.ds.getLocation());
+            return String.format("/home/lvuser/beaverlogs/%d_%s_%d_log.csv", ++this.max, this.ds.getAlliance().name(), this.ds.getLocation());
         }else if(this.fileName != null){ 
-        	return String.format("/home/lvuser/beaverlogs/%d_%s.txt",++this.max,this.fileName);
+        	return String.format("/home/lvuser/beaverlogs/%d_%s.csv",++this.max,this.fileName);
         }else {
-            return String.format("/home/lvuser/beaverlogs/%d_log.txt", ++this.max);
+            return String.format("/home/lvuser/beaverlogs/%d_log.csv", ++this.max);
         }
     }
    
